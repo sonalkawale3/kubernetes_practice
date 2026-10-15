@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HAProxy Ingress Controller - Notes & Architecture</title>
+  <style>
+    :root {
+      --bg: #070d18;
+      --card-bg: rgba(13, 27, 48, 0.82);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --accent: #38bdf8;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body {
+      background: radial-gradient(circle at 15% 15%, rgba(2, 132, 199, 0.2), transparent 45%),
+                  radial-gradient(circle at 85% 85%, rgba(56, 189, 248, 0.14), transparent 40%),
+                  var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 1.25rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--card-border);
+      backdrop-filter: blur(14px);
+      background: rgba(7, 13, 24, 0.7);
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: #e2e8f0;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .back-btn:hover {
+      background: rgba(2, 132, 199, 0.25);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .badge {
+      background: rgba(2, 132, 199, 0.25);
+      border: 1px solid rgba(2, 132, 199, 0.45);
+      color: #38bdf8;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+    main {
+      flex: 1;
+      max-width: 1050px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+      width: 100%;
+    }
+    .hero { margin-bottom: 2.5rem; }
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .section-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .section-card h2 {
+      font-size: 1.4rem;
+      color: #fff;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 0.75rem;
+    }
+    .section-card p, .section-card li {
+      font-size: 0.98rem;
+      color: #cbd5e1;
+      line-height: 1.7;
+    }
+    .section-card ul {
+      margin-left: 1.5rem;
+      margin-top: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+    @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+    .feature-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+    .feature-box h3 {
+      font-size: 1.1rem;
+      color: #38bdf8;
+      margin-bottom: 0.5rem;
+    }
+    pre {
+      background: #040810;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 1.25rem;
+      overflow-x: auto;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.9rem;
+      color: #38bdf8;
+      margin-top: 1rem;
+    }
+    footer {
+      border-top: 1px solid var(--card-border);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/" class="back-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      Back to Main Hub (/)
+    </a>
+    <div class="badge">HAProxy Ingress Controller</div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <h1>
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        HAProxy Ingress Controller
+      </h1>
+      <p>
+        Renowned for world-class raw throughput, microsecond request latency, and hitless dynamic configuration reloads under immense load.
+      </p>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <div class="section-card">
+      <h2>1. Architecture & Mechanism</h2>
+      <p>
+        The HAProxy Ingress controller runs an optimized HAProxy event-driven proxy engine alongside a Kubernetes controller daemon. Rather than reloading the daemon whenever pod endpoints change, HAProxy communicates with an in-memory <strong>Runtime Socket API</strong> to dynamically add, remove, and health-check backend servers in microseconds without process restarts.
+      </p>
+      <div class="grid-2">
+        <div class="feature-box">
+          <h3>⚡ Hitless Dynamic Reloads</h3>
+          <p>
+            Dynamically updates upstream server states and slot allocations through runtime sockets without dropping existing TCP sockets or leaking file descriptors.
+          </p>
+        </div>
+        <div class="feature-box">
+          <h3>🛡️ Advanced DDoS & Rate Limiting</h3>
+          <p>
+            Engineered to handle SYN floods, Slowloris attacks, and extreme volumetric spikes using stick tables to track client request velocities with near-zero latency penalty.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- YAML EXAMPLE -->
+    <div class="section-card">
+      <h2>2. Key Annotations & Ingress Example</h2>
+      <p>HAProxy Ingress manifest configuration example:</p>
+      <pre>apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: haproxy-sample-ingress
+  annotations:
+    kubernetes.io/ingress.class: "haproxy"
+    haproxy.org/rewrite-target: /
+    haproxy.org/ssl-redirect: "true"
+    haproxy.org/load-balance: "roundrobin"
+    haproxy.org/rate-limit-requests: "100"
+spec:
+  ingressClassName: haproxy
+  rules:
+  - host: abc.jogeshwari.xyz
+    http:
+      paths:
+      - path: /haproxy
+        pathType: Prefix
+        backend:
+          service:
+            name: haproxy-web-svc
+            port:
+              number: 80</pre>
+    </div>
+
+    <!-- PROS AND CONS -->
+    <div class="section-card">
+      <h2>3. Trade-offs (Pros & Cons)</h2>
+      <div class="grid-2">
+        <div>
+          <strong style="color: #34d399;">Advantages:</strong>
+          <ul>
+            <li>Industry-leading speed, memory efficiency, and ultra-low CPU consumption.</li>
+            <li>Zero connection drops during high pod churning due to runtime socket reloads.</li>
+            <li>Sophisticated cookie-based sticky sessions and active health checking.</li>
+            <li>Rock-solid defense against DDoS and malicious crawler patterns.</li>
+          </ul>
+        </div>
+        <div>
+          <strong style="color: #f87171;">Considerations:</strong>
+          <ul>
+            <li>Smaller community extension ecosystem compared to NGINX.</li>
+            <li>Custom header manipulation syntax is slightly more specialized.</li>
+            <li>Typically chosen when throughput and latency are the #1 architectural priority.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2026 Jogeshwari Cloud • Ingress Controller Reference • Host: abc.jogeshwari.xyz
+  </footer>
+</body>
+</html>

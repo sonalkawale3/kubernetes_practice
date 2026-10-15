@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kubernetes Ingress Controllers Master Hub | abc.jogeshwari.xyz</title>
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --card-bg: rgba(18, 24, 43, 0.75);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --card-hover-border: rgba(99, 102, 241, 0.5);
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --accent: #06b6d4;
+      --success: #10b981;
+      --amber: #f59e0b;
+      --purple: #a855f7;
+      --rose: #f43f5e;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+    body {
+      background: radial-gradient(circle at 10% 15%, rgba(99, 102, 241, 0.16), transparent 40%),
+                  radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.14), transparent 45%),
+                  radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.08), transparent 60%),
+                  var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 1.25rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--card-border);
+      backdrop-filter: blur(14px);
+      background: rgba(10, 14, 26, 0.7);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      font-weight: 700;
+      font-size: 1.3rem;
+      letter-spacing: -0.5px;
+    }
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 18px rgba(99, 102, 241, 0.45);
+    }
+    .header-badges {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      font-size: 0.85rem;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-weight: 500;
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #10b981;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    main {
+      flex: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 4rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .hero-tag {
+      background: linear-gradient(90deg, rgba(99, 102, 241, 0.25), rgba(6, 182, 212, 0.25));
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      color: #a5b4fc;
+      font-size: 0.85rem;
+      padding: 6px 18px;
+      border-radius: 999px;
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      font-weight: 700;
+    }
+    h1 {
+      font-size: 3.25rem;
+      line-height: 1.15;
+      font-weight: 800;
+      margin-bottom: 1.25rem;
+      background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 70%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -1px;
+    }
+    p.lead-text {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      max-width: 820px;
+      margin-bottom: 3rem;
+      line-height: 1.65;
+    }
+
+    /* INGRESS DESCRIPTION SECTION (30-60 lines) */
+    .ingress-overview-card {
+      width: 100%;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 2.75rem 2.5rem;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
+      text-align: left;
+      margin-bottom: 3.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .ingress-overview-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent), var(--purple));
+    }
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 1.5rem;
+    }
+    .card-title svg {
+      color: var(--accent);
+    }
+    .overview-text {
+      font-size: 1.02rem;
+      line-height: 1.75;
+      color: #cbd5e1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.15rem;
+    }
+    .overview-text strong {
+      color: #f1f5f9;
+    }
+    .key-points-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1.75rem;
+      padding-top: 1.75rem;
+      border-top: 1px solid var(--card-border);
+    }
+    .point-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 1.25rem;
+      transition: all 0.25s ease;
+    }
+    .point-box:hover {
+      background: rgba(99, 102, 241, 0.08);
+      border-color: rgba(99, 102, 241, 0.3);
+      transform: translateY(-2px);
+    }
+    .point-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      color: #e2e8f0;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .point-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* CONTROLLERS BUTTONS SHOWCASE */
+    .section-heading {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: #fff;
+    }
+    .section-subheading {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+      max-width: 680px;
+    }
+    .controllers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.75rem;
+      width: 100%;
+      margin-bottom: 3.5rem;
+    }
+    .controller-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 2rem 1.75rem;
+      backdrop-filter: blur(14px);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .controller-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+    .controller-card.agic:hover { border-color: #0078d4; }
+    .controller-card.nginx:hover { border-color: #009639; }
+    .controller-card.istio:hover { border-color: #466bb0; }
+    .controller-card.haproxy:hover { border-color: #1a82e2; }
+
+    .controller-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+    .agic .controller-icon { background: rgba(0, 120, 212, 0.18); color: #0078d4; border: 1px solid rgba(0, 120, 212, 0.35); }
+    .nginx .controller-icon { background: rgba(0, 150, 57, 0.18); color: #009639; border: 1px solid rgba(0, 150, 57, 0.35); }
+    .istio .controller-icon { background: rgba(70, 107, 176, 0.2); color: #818cf8; border: 1px solid rgba(70, 107, 176, 0.4); }
+    .haproxy .controller-icon { background: rgba(26, 130, 226, 0.18); color: #38bdf8; border: 1px solid rgba(26, 130, 226, 0.35); }
+
+    .controller-name {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.35rem;
+    }
+    .controller-tag {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+    .agic .controller-tag { background: rgba(0, 120, 212, 0.15); color: #60a5fa; }
+    .nginx .controller-tag { background: rgba(0, 150, 57, 0.15); color: #4ade80; }
+    .istio .controller-tag { background: rgba(70, 107, 176, 0.2); color: #a5b4fc; }
+    .haproxy .controller-tag { background: rgba(26, 130, 226, 0.15); color: #38bdf8; }
+
+    .controller-desc {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 1.75rem;
+      flex: 1;
+    }
+    .btn-controller {
+      width: 100%;
+      padding: 0.95rem 1.25rem;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+    }
+    .agic .btn-controller {
+      background: linear-gradient(135deg, #0078d4, #005a9e);
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(0, 120, 212, 0.35);
+    }
+    .nginx .btn-controller {
+      background: linear-gradient(135deg, #009639, #007a2e);
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(0, 150, 57, 0.35);
+    }
+    .istio .btn-controller {
+      background: linear-gradient(135deg, #4f46e5, #4338ca);
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35);
+    }
+    .haproxy .btn-controller {
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(2, 132, 199, 0.35);
+    }
+    .btn-controller:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+    }
+
+    /* PAYMENT BANNER */
+    .payment-strip {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.5rem;
+      backdrop-filter: blur(12px);
+    }
+    .payment-strip-text {
+      text-align: left;
+    }
+    .payment-strip-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.25rem;
+    }
+    .payment-strip-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    .btn-pay-link {
+      padding: 0.8rem 1.5rem;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.92rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      transition: all 0.2s;
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
+    }
+    .btn-pay-link:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+    }
+
+    footer {
+      border-top: 1px solid var(--card-border);
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      background: rgba(10, 14, 26, 0.8);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <div class="logo-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+        </svg>
+      </div>
+      <span>Jogeshwari Cloud</span>
+    </div>
+    <div class="header-badges">
+      <div class="badge-status">
+        <span class="pulse-dot"></span>
+        Host: abc.jogeshwari.xyz
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero-tag">Cloud Native Architecture</div>
+    <h1>Kubernetes Ingress Controllers</h1>
+    <p class="lead-text">
+      The mission-critical Layer 7 gateway that bridges external internet traffic into distributed container microservices with intelligent routing, TLS termination, and enterprise security.
+    </p>
+
+    <!-- INGRESS CONTROLLER DESCRIPTION (30-60 lines) -->
+    <section class="ingress-overview-card">
+      <div class="card-title">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+          <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+          <line x1="6" y1="6" x2="6.01" y2="6"></line>
+          <line x1="6" y1="18" x2="6.01" y2="18"></line>
+        </svg>
+        What is a Kubernetes Ingress Controller?
+      </div>
+      <div class="overview-text">
+        <p>
+          In a Kubernetes cluster, individual Pods have dynamic, ephemeral IP addresses that are not directly routable from outside the cluster network. While standard Kubernetes <strong>ClusterIP Services</strong> load-balance traffic internally, and <strong>LoadBalancer Services</strong> provision a dedicated cloud load balancer with a unique public IP for each service, this quickly becomes cost-prohibitive and unmanageable as microservice architectures scale to tens or hundreds of services.
+        </p>
+        <p>
+          A <strong>Kubernetes Ingress Controller</strong> solves this architectural challenge by serving as an intelligent <strong>Layer 7 (HTTP/HTTPS) reverse proxy</strong>. It exposes an entire microservice fleet to the internet behind a <em>single, shared external entry point</em> (IP address or DNS hostname). The Ingress system consists of two distinct components: the <strong>Ingress Resource</strong> (a declarative YAML definition specifying routing rules such as hosts and URL paths) and the <strong>Ingress Controller</strong> (the active software daemon running inside or alongside the cluster that continuously reads those rules and configures the proxy data plane).
+        </p>
+        <p>
+          Under the hood, the Ingress Controller runs a continuous <strong>control loop</strong> watching the Kubernetes API server for changes to Ingresses, Services, and Endpoints. When new Pods spin up or scale down, the controller dynamically discovers their IP addresses and re-configures its routing table in real time without dropping active connections. In addition to basic path routing, modern Ingress Controllers provide enterprise capabilities including <strong>TLS/SSL termination</strong>, SNI-based multi-tenant routing, <strong>HTTP to HTTPS redirects</strong>, rate limiting, canary deployments (percentage-based traffic splits), and Web Application Firewall (WAF) threat inspection.
+        </p>
+      </div>
+
+      <!-- KEY ARCHITECTURAL PILLARS -->
+      <div class="key-points-grid">
+        <div class="point-box">
+          <div class="point-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Path & Host Routing
+          </div>
+          <div class="point-desc">
+            Route incoming requests based on URI paths (e.g. <code>/payment</code>, <code>/agic</code>) or virtual domains (e.g. <code>api.xyz.com</code>) to distinct backend Kubernetes services.
+          </div>
+        </div>
+        <div class="point-box">
+          <div class="point-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            TLS / SSL Termination
+          </div>
+          <div class="point-desc">
+            Decrypt SSL certificates at the edge boundary, offloading intensive cryptographic operations from internal microservice pods.
+          </div>
+        </div>
+        <div class="point-box">
+          <div class="point-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Cost & IP Optimization
+          </div>
+          <div class="point-desc">
+            Eliminates provisioning separate cloud Load Balancers for every microservice, consolidating hundreds of services behind a single external IP.
+          </div>
+        </div>
+        <div class="point-box">
+          <div class="point-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Zero-Downtime Reloads
+          </div>
+          <div class="point-desc">
+            Automatically synchronizes with Kubernetes pod endpoints as replicas scale out or update, performing hitless configuration refreshes.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INGRESS CONTROLLER BUTTONS & SHOWCASE -->
+    <h2 class="section-heading">Explore Ingress Controllers</h2>
+    <p class="section-subheading">
+      Click any of the four major Ingress Controllers below to read comprehensive deep-dive notes, architectural diagrams, pros/cons, and implementation guides.
+    </p>
+
+    <div class="controllers-grid">
+      <!-- 1. AGIC -->
+      <div class="controller-card agic">
+        <div class="controller-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
+          </svg>
+        </div>
+        <div class="controller-name">AGIC</div>
+        <span class="controller-tag">Azure Native</span>
+        <p class="controller-desc">
+          Azure Application Gateway Ingress Controller. Uses ARM APIs to program Azure L7 ALB directly, routing straight into AKS pod IPs with integrated Azure WAF.
+        </p>
+        <a href="/agic" class="btn-controller" id="btn-nav-agic">
+          View AGIC Notes
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
+      </div>
+
+      <!-- 2. NGINX -->
+      <div class="controller-card nginx">
+        <div class="controller-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+          </svg>
+        </div>
+        <div class="controller-name">NGINX Ingress</div>
+        <span class="controller-tag">De-Facto Standard</span>
+        <p class="controller-desc">
+          The most widely adopted Kubernetes Ingress Controller globally. Ultra-mature, rich annotation ecosystem, regex matching, and customizable config snippets.
+        </p>
+        <a href="/nginx" class="btn-controller" id="btn-nav-nginx">
+          View NGINX Notes
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
+      </div>
+
+      <!-- 3. ISTIO -->
+      <div class="controller-card istio">
+        <div class="controller-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
+        </div>
+        <div class="controller-name">Istio Gateway</div>
+        <span class="controller-tag">Service Mesh</span>
+        <p class="controller-desc">
+          Envoy-based Ingress gateway with advanced traffic splitting (Canary/A-B testing), mutual TLS (mTLS) zero-trust encryption, and end-to-end distributed tracing.
+        </p>
+        <a href="/istio" class="btn-controller" id="btn-nav-istio">
+          View Istio Notes
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
+      </div>
+
+      <!-- 4. HAPROXY -->
+      <div class="controller-card haproxy">
+        <div class="controller-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        </div>
+        <div class="controller-name">HAProxy Ingress</div>
+        <span class="controller-tag">High Performance</span>
+        <p class="controller-desc">
+          Legendary speed and microsecond latency. Known for 2M+ connections, dynamic runtime API reloads without process drops, and rock-solid DDoS mitigation.
+        </p>
+        <a href="/haproxy" class="btn-controller" id="btn-nav-haproxy">
+          View HAProxy Notes
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- PAYMENT DEMO BANNER -->
+    <div class="payment-strip">
+      <div class="payment-strip-text">
+        <div class="payment-strip-title">Interactive Path Routing Demo: /payment</div>
+        <div class="payment-strip-desc">Test Kubernetes path-based routing by jumping directly to the Payment Gateway microservice.</div>
+      </div>
+      <a href="/payment" class="btn-pay-link" id="btn-pay-demo">
+        Go to Payment Page (/payment)
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </a>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2026 Jogeshwari Cloud • Kubernetes Ingress Architecture • Controller: Azure Application Gateway Ingress (AGIC) • Host: abc.jogeshwari.xyz
+  </footer>
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AGIC (Azure Application Gateway Ingress Controller) - Notes & Architecture</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(16, 24, 44, 0.82);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --primary: #0078d4;
+      --primary-hover: #005a9e;
+      --accent: #38bdf8;
+      --success: #10b981;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body {
+      background: radial-gradient(circle at 15% 15%, rgba(0, 120, 212, 0.18), transparent 45%),
+                  radial-gradient(circle at 85% 85%, rgba(56, 189, 248, 0.12), transparent 40%),
+                  var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 1.25rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--card-border);
+      backdrop-filter: blur(14px);
+      background: rgba(9, 13, 22, 0.7);
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: #e2e8f0;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .back-btn:hover {
+      background: rgba(0, 120, 212, 0.2);
+      border-color: var(--primary);
+      color: #fff;
+    }
+    .badge {
+      background: rgba(0, 120, 212, 0.2);
+      border: 1px solid rgba(0, 120, 212, 0.4);
+      color: #60a5fa;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+    main {
+      flex: 1;
+      max-width: 1050px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+      width: 100%;
+    }
+    .hero {
+      margin-bottom: 2.5rem;
+    }
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .section-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .section-card h2 {
+      font-size: 1.4rem;
+      color: #fff;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 0.75rem;
+    }
+    .section-card p, .section-card li {
+      font-size: 0.98rem;
+      color: #cbd5e1;
+      line-height: 1.7;
+    }
+    .section-card ul {
+      margin-left: 1.5rem;
+      margin-top: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+    @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+    .feature-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+    .feature-box h3 {
+      font-size: 1.1rem;
+      color: #60a5fa;
+      margin-bottom: 0.5rem;
+    }
+    pre {
+      background: #050811;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 1.25rem;
+      overflow-x: auto;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.9rem;
+      color: #38bdf8;
+      margin-top: 1rem;
+    }
+    footer {
+      border-top: 1px solid var(--card-border);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/" class="back-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      Back to Main Hub (/)
+    </a>
+    <div class="badge">Azure Application Gateway Ingress Controller</div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <h1>
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#0078d4" stroke-width="2.2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>
+        Azure Application Gateway Ingress Controller (AGIC)
+      </h1>
+      <p>
+        A Kubernetes application that makes it possible for Azure Kubernetes Service (AKS) customers to leverage Azure's native Application Gateway L7 load balancer directly.
+      </p>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <div class="section-card">
+      <h2>1. Architecture & Mechanism</h2>
+      <p>
+        AGIC monitors the AKS cluster's Kubernetes API server for changes to <code>Ingress</code>, <code>Service</code>, and <code>Endpoint</code> resources. When a change occurs, the AGIC pod translates those declarative Kubernetes manifests into Azure Resource Manager (ARM) REST API calls and applies the routing configuration directly to the <strong>Azure Application Gateway</strong>.
+      </p>
+      <div class="grid-2">
+        <div class="feature-box">
+          <h3>⚡ Direct Pod Routing (Azure CNI)</h3>
+          <p>
+            Unlike in-cluster reverse proxies, App Gateway routes traffic directly to AKS Pod private IPs via Azure CNI, completely bypassing NodePort translation and <code>kube-proxy</code> hops.
+          </p>
+        </div>
+        <div class="feature-box">
+          <h3>🛡️ Azure WAF Protection</h3>
+          <p>
+            Provides enterprise Web Application Firewall (OWASP CRS ruleset) at the network perimeter to defend against SQLi, XSS, and DDoS before malicious packets ever enter the cluster.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- YAML EXAMPLE -->
+    <div class="section-card">
+      <h2>2. Key Annotations & Ingress Example</h2>
+      <p>Here is how AGIC is configured using standard annotations:</p>
+      <pre>apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: agic-sample-ingress
+  annotations:
+    kubernetes.io/ingress.class: azure/application-gateway
+    appgw.ingress.kubernetes.io/backend-path-prefix: "/"
+    appgw.ingress.kubernetes.io/ssl-redirect: "true"
+    appgw.ingress.kubernetes.io/cookie-based-affinity: "true"
+spec:
+  ingressClassName: azure-application-gateway
+  rules:
+  - host: abc.jogeshwari.xyz
+    http:
+      paths:
+      - path: /agic
+        pathType: Prefix
+        backend:
+          service:
+            name: agic-web-svc
+            port:
+              number: 80</pre>
+    </div>
+
+    <!-- PROS AND CONS -->
+    <div class="section-card">
+      <h2>3. Trade-offs (Pros & Cons)</h2>
+      <div class="grid-2">
+        <div>
+          <strong style="color: #34d399;">Advantages:</strong>
+          <ul>
+            <li>No data-plane CPU/Memory consumption inside cluster worker nodes.</li>
+            <li>Managed PaaS scaling, 99.95% SLA, and automatic patching.</li>
+            <li>Direct integration with Azure Key Vault for TLS certificate rotation.</li>
+            <li>Integrated Azure Monitor metrics and traffic analytics.</li>
+          </ul>
+        </div>
+        <div>
+          <strong style="color: #f87171;">Considerations:</strong>
+          <ul>
+            <li>Tied directly to the Microsoft Azure cloud ecosystem (no on-prem).</li>
+            <li>Configuration updates take 10-30s via ARM API compared to instant in-cluster reloads.</li>
+            <li>Requires Azure CNI or Kubenet with advanced routing setup.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2026 Jogeshwari Cloud • Ingress Controller Reference • Host: abc.jogeshwari.xyz
+  </footer>
+</body>
+</html>

@@ -1,0 +1,55 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jogeshwari-ingress
+  annotations:
+    # Rewrites the request path forwarded to backend pods to "/"
+    appgw.ingress.kubernetes.io/backend-path-prefix: "/"
+spec:
+  ingressClassName: azure-application-gateway
+  rules:
+  - host: abc.jogeshwari.xyz
+    http:
+      paths:
+      - path: /agic
+        pathType: Prefix
+        backend:
+          service:
+            name: agic-web-svc
+            port:
+              number: 80
+      - path: /nginx
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-web-svc
+            port:
+              number: 80
+      - path: /istio
+        pathType: Prefix
+        backend:
+          service:
+            name: istio-web-svc
+            port:
+              number: 80
+      - path: /haproxy
+        pathType: Prefix
+        backend:
+          service:
+            name: haproxy-web-svc
+            port:
+              number: 80
+      - path: /payment
+        pathType: Prefix
+        backend:
+          service:
+            name: payment-web-svc
+            port:
+              number: 80
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: main-web-svc
+            port:
+              number: 80

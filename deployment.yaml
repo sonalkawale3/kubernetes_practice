@@ -1,0 +1,184 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: main-web-deployment
+  labels:
+    app: main-web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: main-web
+  template:
+    metadata:
+      labels:
+        app: main-web
+    spec:
+      containers:
+      - name: web
+        image: sonalkawale/main-web:v2
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 250m
+            memory: 128Mi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agic-web-deployment
+  labels:
+    app: agic-web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: agic-web
+  template:
+    metadata:
+      labels:
+        app: agic-web
+    spec:
+      containers:
+      - name: agic-web
+        image: sonalkawale/agic-web:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 250m
+            memory: 128Mi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-web-deployment
+  labels:
+    app: nginx-web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-web
+  template:
+    metadata:
+      labels:
+        app: nginx-web
+    spec:
+      containers:
+      - name: nginx-web
+        image: sonalkawale/nginx-web:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 250m
+            memory: 128Mi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: istio-web-deployment
+  labels:
+    app: istio-web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: istio-web
+  template:
+    metadata:
+      labels:
+        app: istio-web
+    spec:
+      containers:
+      - name: istio-web
+        image: sonalkawale/istio-web:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 250m
+            memory: 128Mi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: haproxy-web-deployment
+  labels:
+    app: haproxy-web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: haproxy-web
+  template:
+    metadata:
+      labels:
+        app: haproxy-web
+    spec:
+      containers:
+      - name: haproxy-web
+        image: sonalkawale/haproxy-web:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 250m
+            memory: 128Mi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-web-deployment
+  labels:
+    app: payment-web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: payment-web
+  template:
+    metadata:
+      labels:
+        app: payment-web
+    spec:
+      containers:
+      - name: payment-web
+        image: sonalkawale/payment-web:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 250m
+            memory: 128Mi
