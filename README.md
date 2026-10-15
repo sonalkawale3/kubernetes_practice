@@ -1,43 +1,103 @@
-# ☸️ Kubernetes Ingress Controllers Master Hub & Multi-Service Practice Lab
+<div align="center">
 
-[![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.20+-326CE5?style=flat&logo=kubernetes&logoColor=white)](https://kubernetes.io/)
-[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)
-[![Azure AGIC](https://img.shields.io/badge/Ingress-Azure%20AGIC-0078D4?style=flat&logo=microsoftazure&logoColor=white)](https://azure.github.io/application-gateway-kubernetes-ingress/)
-[![NGINX](https://img.shields.io/badge/Proxy-NGINX%20Alpine-009639?style=flat&logo=nginx&logoColor=white)](https://nginx.org/)
-[![Status](https://img.shields.io/badge/Status-Active-brightgreen?style=flat)]()
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+# ☸️ Kubernetes Ingress Controllers Master Hub
+### *Production-Grade Layer 7 Ingress Routing, Service Mesh & Multi-Microservice Practice Lab*
 
-A production-style Kubernetes demonstration project showcasing **Layer 7 path-based routing**, microservice containerization, and in-depth architectural guides for the industry's four leading Kubernetes Ingress controllers (**Azure AGIC**, **NGINX Ingress**, **Istio Service Mesh Gateway**, and **HAProxy Ingress**), complemented by an interactive **Payment Gateway** demo application.
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.20+-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Azure AGIC](https://img.shields.io/badge/Azure-AGIC-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white)](https://azure.github.io/application-gateway-kubernetes-ingress/)
+[![NGINX](https://img.shields.io/badge/NGINX-Alpine-009639?style=for-the-badge&logo=nginx&logoColor=white)](https://nginx.org/)
+[![Istio](https://img.shields.io/badge/Istio-Envoy_Mesh-466BB0?style=for-the-badge&logo=istio&logoColor=white)](https://istio.io/)
+[![HAProxy](https://img.shields.io/badge/HAProxy-High_Perf-1A82E2?style=for-the-badge&logo=haproxy&logoColor=white)](https://www.haproxy.org/)
+[![License](https://img.shields.io/badge/License-MIT-F59E0B?style=for-the-badge)](LICENSE)
+
+<br/>
+
+[🚀 Quick Start](#-quick-start--deployment) • [📐 Architecture](#-architecture--traffic-flow) • [📊 Routing Matrix](#-microservices--routing-matrix) • [⚖️ Controller Comparison](#-ingress-controller-comparison) • [📦 Docker Images](#-building--pushing-docker-images) • [❓ Troubleshooting](#-troubleshooting)
+
+<br/>
+
+```
+      _                       _                         _  ____  
+     | | ___   __ _  ___  ___| |____      ____ _ _ __ (_)|___ \ 
+  _  | |/ _ \ / _` |/ _ \/ __| '_ \ \ /\ / / _` | '__|| |  __) |
+ | |_| | (_) | (_| |  __/\__ \ | | \ V  V / (_| | |   | | / __/ 
+  \___/ \___/ \__, |\___||___/_| |_|\_/\_/ \__,_|_|   |_||_____|
+              |___/                                             
+              ☸️ CLOUD-NATIVE INGRESS ARCHITECTURE LAB ☸️
+```
+
+<p align="center">
+  <b>Domain Entrypoint:</b> <code>abc.jogeshwari.xyz</code> &nbsp;|&nbsp;
+  <b>Target Platform:</b> Azure Kubernetes Service (AKS) & Application Gateway
+</p>
+
+</div>
+
+---
+
+> [!NOTE]
+> **About This Repository**: An end-to-end, hands-on Kubernetes practice environment showcasing **Layer 7 path-based routing**, dynamic path rewrites, containerized microservices, and deep-dive technical architectures comparing the industry's four leading Ingress controllers: **Azure AGIC**, **NGINX Ingress**, **Istio Service Mesh Gateway**, and **HAProxy Ingress**, plus an interactive **Payment Gateway** demo.
 
 ---
 
 ## 📑 Table of Contents
 
-- [Overview](#-overview)
-- [Architecture & Traffic Flow](#-architecture--traffic-flow)
-- [Microservices & Routing Matrix](#-microservices--routing-matrix)
-- [Ingress Controller Comparison](#-ingress-controller-comparison)
-- [Repository Structure](#-repository-structure)
-- [Prerequisites](#-prerequisites)
-- [Quick Start & Deployment](#-quick-start--deployment)
-- [DNS & Host Resolution](#-dns--host-resolution)
-- [Testing & Verification](#-testing--verification)
-- [Adapting for Other Ingress Controllers](#-adapting-for-other-ingress-controllers)
-- [Building & Pushing Docker Images](#-building--pushing-docker-images)
-- [Troubleshooting](#-troubleshooting)
-- [Author & Credits](#-author--credits)
+- [🌟 Architectural Highlights](#-architectural-highlights)
+- [📐 Architecture & Traffic Flow](#-architecture--traffic-flow)
+- [🧩 Deployed Services Showcase](#-deployed-services-showcase)
+- [📊 Microservices & Routing Matrix](#-microservices--routing-matrix)
+- [⚖️ Ingress Controller Comparison](#-ingress-controller-comparison)
+- [📁 Repository Structure](#-repository-structure)
+- [🛠️ Prerequisites](#-prerequisites)
+- [🚀 Quick Start & Deployment](#-quick-start--deployment)
+- [🌐 DNS & Host Resolution](#-dns--host-resolution)
+- [🔍 Testing & Verification](#-testing--verification)
+- [🔄 Adapting for Other Ingress Controllers](#-adapting-for-other-ingress-controllers)
+- [📦 Building & Pushing Docker Images](#-building--pushing-docker-images)
+- [❓ Troubleshooting Guide](#-troubleshooting-guide)
+- [👤 Author & Credits](#-author--credits)
 
 ---
 
-## 🌟 Overview
+## 🌟 Architectural Highlights
 
-Modern cloud-native platforms rely on **Kubernetes Ingress Controllers** to expose internal, ephemeral microservices securely behind a unified entry point. 
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <h4>⚡ Intelligent Layer 7 Routing</h4>
+      <ul>
+        <li>Routes an entire distributed application suite behind a <b>single external IP / DNS hostname</b> (<code>abc.jogeshwari.xyz</code>).</li>
+        <li>Eliminates the cost and operational overhead of provisioning dedicated cloud load balancers per service.</li>
+      </ul>
+    </td>
+    <td width="50%" valign="top">
+      <h4>🔄 Automated Path Rewriting</h4>
+      <ul>
+        <li>Leverages <code>appgw.ingress.kubernetes.io/backend-path-prefix: "/"</code>.</li>
+        <li>Allows clients to reach microservices at distinct subpaths (e.g. <code>/payment</code>, <code>/agic</code>) while upstream pods cleanly receive requests at root <code>/</code>.</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <h4>🛡️ Enterprise Security & WAF Ready</h4>
+      <ul>
+        <li>Integrates with Azure Application Gateway WAF v2 for real-time inspection against OWASP Top 10 vulnerabilities.</li>
+        <li>Edge TLS/SSL termination offloads intensive cryptographic handshakes from application pods.</li>
+      </ul>
+    </td>
+    <td width="50%" valign="top">
+      <h4>📦 Resource-Bounded Microservices</h4>
+      <ul>
+        <li>6 distinct containerized services (<b>12 pods total</b>) built on lightweight <code>nginx:alpine</code>.</li>
+        <li>Each deployment is hardened with explicit CPU/Memory <code>requests</code> and <code>limits</code> for cluster stability.</li>
+      </ul>
+    </td>
+  </tr>
+</table>
 
-This repository provides an end-to-end practical blueprint:
-- **Unified Edge Routing**: Routes client requests through a single domain (`abc.jogeshwari.xyz`) using Layer 7 path prefix rules.
-- **Path Rewriting**: Employs `appgw.ingress.kubernetes.io/backend-path-prefix: "/"` so downstream microservices receive clean requests at root `/`.
-- **Educational Deep Dives**: Bundles interactive, responsive web applications detailing configuration snippets, use cases, pros & cons, and internal mechanics of major ingress controllers.
-- **Microservice Isolation**: Demonstrates modular container deployments with explicit CPU/memory requests, limits, and dedicated `ClusterIP` services.
+<div align="right"><a href="#-table-of-contents">⬆ Back to Top</a></div>
 
 ---
 
@@ -45,256 +105,349 @@ This repository provides an end-to-end practical blueprint:
 
 ```mermaid
 flowchart TD
-    Client(["🌐 Client / Browser\nHost: abc.jogeshwari.xyz"]) -->|HTTP Port 80| AGW["☁️ Azure Application Gateway\n(Managed L7 Load Balancer)"]
+    classDef clientStyle fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef gatewayStyle fill:#0f172a,stroke:#6366f1,stroke-width:2px,color:#f8fafc;
+    classDef svcStyle fill:#064e3b,stroke:#10b981,stroke-width:1.5px,color:#f8fafc;
+    classDef podStyle fill:#1e1b4b,stroke:#818cf8,stroke-width:1.5px,color:#f8fafc;
+    classDef ctrlStyle fill:#3b0764,stroke:#c084fc,stroke-width:1.5px,stroke-dasharray: 5 5,color:#f8fafc;
 
-    subgraph K8S ["☸️ Kubernetes Cluster (AKS)"]
-        AGIC["⚙️ AGIC Controller Pod\n(Watches K8s API & programs AGW)"] -.->|Syncs Config| AGW
+    Client(["🌐 Client Browser\nHost: abc.jogeshwari.xyz"]):::clientStyle -->|HTTP :80| AGW["☁️ Azure Application Gateway\nLayer 7 Managed Load Balancer"]:::gatewayStyle
 
-        subgraph Services ["Kubernetes ClusterIP Services"]
-            SVC_MAIN["main-web-svc\n:80"]
-            SVC_AGIC["agic-web-svc\n:80"]
-            SVC_NGINX["nginx-web-svc\n:80"]
-            SVC_ISTIO["istio-web-svc\n:80"]
-            SVC_HAPROXY["haproxy-web-svc\n:80"]
-            SVC_PAYMENT["payment-web-svc\n:80"]
+    subgraph Cluster ["☸️ Kubernetes Cluster (AKS)"]
+        AGIC["⚙️ AGIC Controller Pod\nWatches Ingress & programs AGW"]:::ctrlStyle -.->|ARM REST API Sync| AGW
+
+        subgraph IngressRouting ["Path-Based Routing Table"]
+            R_ROOT["/ ➔ main-web-svc"]
+            R_AGIC["/agic ➔ agic-web-svc"]
+            R_NGINX["/nginx ➔ nginx-web-svc"]
+            R_ISTIO["/istio ➔ istio-web-svc"]
+            R_HAPROXY["/haproxy ➔ haproxy-web-svc"]
+            R_PAYMENT["/payment ➔ payment-web-svc"]
         end
 
-        subgraph Pods ["Replica Sets (2 Pods Each)"]
-            POD_MAIN["main-web Pods (x2)\nsonalkawale/main-web:v2"]
-            POD_AGIC["agic-web Pods (x2)\nsonalkawale/agic-web:v1"]
-            POD_NGINX["nginx-web Pods (x2)\nsonalkawale/nginx-web:v1"]
-            POD_ISTIO["istio-web Pods (x2)\nsonalkawale/istio-web:v1"]
-            POD_HAPROXY["haproxy-web Pods (x2)\nsonalkawale/haproxy-web:v1"]
-            POD_PAYMENT["payment-web Pods (x2)\nsonalkawale/payment-web:v1"]
+        subgraph Services ["Kubernetes ClusterIP Services (Port 80)"]
+            SVC_MAIN["main-web-svc"]:::svcStyle
+            SVC_AGIC["agic-web-svc"]:::svcStyle
+            SVC_NGINX["nginx-web-svc"]:::svcStyle
+            SVC_ISTIO["istio-web-svc"]:::svcStyle
+            SVC_HAPROXY["haproxy-web-svc"]:::svcStyle
+            SVC_PAYMENT["payment-web-svc"]:::svcStyle
+        end
+
+        subgraph Deployments ["Pod Replicas (x2 per Deployment)"]
+            POD_MAIN["2x Pods | sonalkawale/main-web:v2"]:::podStyle
+            POD_AGIC["2x Pods | sonalkawale/agic-web:v1"]:::podStyle
+            POD_NGINX["2x Pods | sonalkawale/nginx-web:v1"]:::podStyle
+            POD_ISTIO["2x Pods | sonalkawale/istio-web:v1"]:::podStyle
+            POD_HAPROXY["2x Pods | sonalkawale/haproxy-web:v1"]:::podStyle
+            POD_PAYMENT["2x Pods | sonalkawale/payment-web:v1"]:::podStyle
         end
     end
 
-    AGW -->|Path: /| SVC_MAIN --> POD_MAIN
-    AGW -->|Path: /agic| SVC_AGIC --> POD_AGIC
-    AGW -->|Path: /nginx| SVC_NGINX --> POD_NGINX
-    AGW -->|Path: /istio| SVC_ISTIO --> POD_ISTIO
-    AGW -->|Path: /haproxy| SVC_HAPROXY --> POD_HAPROXY
-    AGW -->|Path: /payment| SVC_PAYMENT --> POD_PAYMENT
+    AGW --> R_ROOT --> SVC_MAIN --> POD_MAIN
+    AGW --> R_AGIC --> SVC_AGIC --> POD_AGIC
+    AGW --> R_NGINX --> SVC_NGINX --> POD_NGINX
+    AGW --> R_ISTIO --> SVC_ISTIO --> POD_ISTIO
+    AGW --> R_HAPROXY --> SVC_HAPROXY --> POD_HAPROXY
+    AGW --> R_PAYMENT --> SVC_PAYMENT --> POD_PAYMENT
 ```
 
-### Traffic Lifecycle
-1. The user navigates to `http://abc.jogeshwari.xyz/<path>`.
-2. Public DNS resolves `abc.jogeshwari.xyz` to the **Azure Application Gateway Public IP**.
-3. Application Gateway evaluates Ingress routing rules defined in [`ingress.yaml`](ingress.yaml).
-4. The path rewrite annotation (`backend-path-prefix: "/"`) strips the path prefix before forwarding the HTTP request.
-5. Traffic hits the corresponding `ClusterIP` Service on port 80 and is load-balanced across the healthy container Pods.
+### 🔁 Request Lifecycle Step-by-Step
+1. **DNS Resolution**: The browser resolves `abc.jogeshwari.xyz` to the public VIP of the Azure Application Gateway.
+2. **Path Matching**: Application Gateway inspects the incoming URI prefix (e.g. `/payment`, `/istio`, or `/`).
+3. **URL Rewrite**: The `appgw.ingress.kubernetes.io/backend-path-prefix: "/"` annotation strips the prefix.
+4. **Pod Forwarding**: Traffic is sent directly to internal Pod IP addresses using Azure CNI high-speed overlay.
+5. **Response Delivery**: The response is returned to the user with low latency and zero unnecessary intermediate hops.
+
+<div align="right"><a href="#-table-of-contents">⬆ Back to Top</a></div>
+
+---
+
+## 🧩 Deployed Services Showcase
+
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <img src="https://img.shields.io/badge/Portal-Master%20Hub-6366F1?style=for-the-badge&logo=googlecloud&logoColor=white" /><br/>
+      <b><code>/</code> Main Web Hub</b>
+      <p>Central dashboard introducing ingress controller fundamentals, control loop mechanics, and direct navigation links.</p>
+    </td>
+    <td align="center" width="33%">
+      <img src="https://img.shields.io/badge/Controller-Azure%20AGIC-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white" /><br/>
+      <b><code>/agic</code> Azure AGIC</b>
+      <p>Direct CNI pod routing, ARM API controller mechanics, Azure WAF v2 security policies, and enterprise integration patterns.</p>
+    </td>
+    <td align="center" width="33%">
+      <img src="https://img.shields.io/badge/Controller-NGINX%20Ingress-009639?style=for-the-badge&logo=nginx&logoColor=white" /><br/>
+      <b><code>/nginx</code> NGINX Ingress</b>
+      <p>The global community standard. Explores annotations, dynamic Lua scripting, regex location matching, and cert-manager SSL.</p>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="33%">
+      <img src="https://img.shields.io/badge/Mesh-Istio%20Gateway-466BB0?style=for-the-badge&logo=istio&logoColor=white" /><br/>
+      <b><code>/istio</code> Istio Gateway</b>
+      <p>Envoy proxy architecture, decoupling L4-L6 (Gateway CRD) and L7 (VirtualService CRD), zero-trust mTLS, and canary traffic weighting.</p>
+    </td>
+    <td align="center" width="33%">
+      <img src="https://img.shields.io/badge/Controller-HAProxy%20Ingress-1A82E2?style=for-the-badge&logo=haproxy&logoColor=white" /><br/>
+      <b><code>/haproxy</code> HAProxy Ingress</b>
+      <p>Extreme speed, microsecond latency, 2M+ concurrent connection scalability, dynamic runtime socket reloads, and DDoS resilience.</p>
+    </td>
+    <td align="center" width="33%">
+      <img src="https://img.shields.io/badge/Demo-Payment%20Gateway-10B981?style=for-the-badge&logo=stripe&logoColor=white" /><br/>
+      <b><code>/payment</code> Payment Service</b>
+      <p>Interactive simulated checkout interface demonstrating real-world path routing with custom Nginx fallback configuration.</p>
+    </td>
+  </tr>
+</table>
+
+<div align="right"><a href="#-table-of-contents">⬆ Back to Top</a></div>
 
 ---
 
 ## 📊 Microservices & Routing Matrix
 
-The cluster hosts **6 microservices** (12 pods total) with standardized resource requests and limits:
+| Route Path | K8s Service | Deployment Name | Pods | Docker Image | Requests (CPU / Mem) | Limits (CPU / Mem) | Port | Health Status |
+|:---|:---|:---|:---:|:---|:---:|:---:|:---:|:---:|
+| `GET /` | `main-web-svc` | `main-web-deployment` | `2` | `sonalkawale/main-web:v2` | `50m` / `64Mi` | `250m` / `128Mi` | `80` | `🟢 Live` |
+| `GET /agic` | `agic-web-svc` | `agic-web-deployment` | `2` | `sonalkawale/agic-web:v1` | `50m` / `64Mi` | `250m` / `128Mi` | `80` | `🟢 Live` |
+| `GET /nginx` | `nginx-web-svc` | `nginx-web-deployment` | `2` | `sonalkawale/nginx-web:v1` | `50m` / `64Mi` | `250m` / `128Mi` | `80` | `🟢 Live` |
+| `GET /istio` | `istio-web-svc` | `istio-web-deployment` | `2` | `sonalkawale/istio-web:v1` | `50m` / `64Mi` | `250m` / `128Mi` | `80` | `🟢 Live` |
+| `GET /haproxy` | `haproxy-web-svc` | `haproxy-web-deployment` | `2` | `sonalkawale/haproxy-web:v1` | `50m` / `64Mi` | `250m` / `128Mi` | `80` | `🟢 Live` |
+| `GET /payment` | `payment-web-svc` | `payment-web-deployment` | `2` | `sonalkawale/payment-web:v1` | `50m` / `64Mi` | `250m` / `128Mi` | `80` | `🟢 Live` |
 
-| URL Path | Service Name | Deployment Name | Replicas | Docker Image | Requests (CPU / Mem) | Limits (CPU / Mem) | Description |
-|:---|:---|:---|:---:|:---|:---:|:---:|:---|
-| `/` | `main-web-svc` | `main-web-deployment` | 2 | `sonalkawale/main-web:v2` | `50m` / `64Mi` | `250m` / `128Mi` | Master Ingress Hub dashboard with core ingress architectural theory and portal links. |
-| `/agic` | `agic-web-svc` | `agic-web-deployment` | 2 | `sonalkawale/agic-web:v1` | `50m` / `64Mi` | `250m` / `128Mi` | In-depth guide on Azure Application Gateway Ingress Controller & CNI pod routing. |
-| `/nginx` | `nginx-web-svc` | `nginx-web-deployment` | 2 | `sonalkawale/nginx-web:v1` | `50m` / `64Mi` | `250m` / `128Mi` | Architecture, annotations, Lua plugins, and ingress-nginx patterns. |
-| `/istio` | `istio-web-svc` | `istio-web-deployment` | 2 | `sonalkawale/istio-web:v1` | `50m` / `64Mi` | `250m` / `128Mi` | Envoy-based service mesh edge gateway, Gateway/VirtualService CRDs, and mTLS security. |
-| `/haproxy` | `haproxy-web-svc` | `haproxy-web-deployment` | 2 | `sonalkawale/haproxy-web:v1` | `50m` / `64Mi` | `250m` / `128Mi` | High-throughput, ultra-low-latency edge proxying, runtime API, and DDoS mitigation. |
-| `/payment` | `payment-web-svc` | `payment-web-deployment` | 2 | `sonalkawale/payment-web:v1` | `50m` / `64Mi` | `250m` / `128Mi` | Interactive simulated Payment Gateway checkout UI demonstrating live path routing. |
+> [!IMPORTANT]
+> **Total Footprint**: Deploying the entire stack spins up **12 lightweight Pods**, consuming an initial request baseline of only **300m CPU** and **384Mi Memory**, making it suitable for any development or production AKS cluster.
+
+<div align="right"><a href="#-table-of-contents">⬆ Back to Top</a></div>
 
 ---
 
 ## ⚖️ Ingress Controller Comparison
 
-| Feature / Trait | Azure AGIC | NGINX Ingress | Istio Ingress Gateway | HAProxy Ingress |
-|:---|:---|:---|:---|:---|
-| **Data Plane Engine** | Azure Application Gateway (Managed) | NGINX Open-Source | Envoy Proxy | HAProxy Core |
-| **Execution Model** | External Cloud Load Balancer (Out-of-cluster) | In-cluster Pods (DaemonSet or Deployment) | In-cluster Envoy Pods (Service Mesh Boundary) | In-cluster Pods |
-| **Pod Direct Routing** | ✅ Yes (routes directly to Pod IPs via Azure CNI) | ⚠️ Via ClusterIP/Endpoints | ⚠️ Via Envoy sidecars & mesh endpoints | ⚠️ Via Endpoints / ClusterIP |
-| **Configuration** | Ingress resource + Azure annotations | Ingress resource + Nginx annotations | Custom Resources (`Gateway`, `VirtualService`) | Ingress resource + HAProxy annotations |
-| **WAF Integration** | ✅ Native Azure WAF v2 (OWASP Top 10) | ⚠️ ModSecurity / App Protect (requires setup) | ⚠️ Envoy Wasm / Coraza filters | ⚠️ ModSecurity / SPOE plugins |
-| **Traffic Splitting (Canary)** | Basic weight annotations | Annotation-based canary (`canary-by-header`, etc.) | ✅ Native granular percentage splitting in `VirtualService` | Annotation-based canary |
-| **Zero-Trust Security (mTLS)** | Cloud TLS termination | Edge TLS termination | ✅ Automatic end-to-end mTLS across all mesh pods | Edge TLS termination |
-| **Best Suited For** | Azure AKS enterprise deployments needing cloud-managed WAF | Universal, multi-cloud standard; most widely supported | Microservice meshes needing advanced observability & mTLS | Extreme packet performance, low memory footprint, and massive concurrency |
+An architectural cheat sheet contrasting the 4 major Kubernetes Ingress controllers covered in this project:
+
+```
+┌─────────────────────┬───────────────────┬───────────────────┬───────────────────┬───────────────────┐
+│ Feature / Dimension │    Azure AGIC     │   NGINX Ingress   │   Istio Gateway   │  HAProxy Ingress  │
+├─────────────────────┼───────────────────┼───────────────────┼───────────────────┼───────────────────┤
+│ Data Plane Proxy    │ Azure App Gateway │ NGINX Open-Source │ Envoy Proxy       │ HAProxy Core      │
+│ Placement           │ Cloud Managed     │ In-Cluster Pods   │ Mesh Edge Pods    │ In-Cluster Pods   │
+│ Direct Pod Routing  │ ✅ Azure CNI direct│ ⚠️ Via Endpoints  │ ⚠️ Sidecar mesh   │ ⚠️ Via Endpoints  │
+│ Config Resources    │ Ingress + Annot.  │ Ingress + Annot.  │ Gateway + VService│ Ingress + Annot.  │
+│ Native WAF          │ ✅ Azure WAF v2   │ ⚠️ ModSecurity    │ ⚠️ Wasm Plugins   │ ⚠️ SPOE / Plugins │
+│ Canary Weighting    │ Basic Annotations │ Annotation-based  │ ✅ Native Granular│ Annotation-based  │
+│ Zero-Trust mTLS     │ At Gateway Edge   │ At Gateway Edge   │ ✅ End-to-End Mesh│ At Gateway Edge   │
+│ Primary Advantage   │ Zero Pod Hop Lat. │ Ubiquitous & Easy │ Observability/mTLS│ Microsecond Speed │
+└─────────────────────┴───────────────────┴───────────────────┴───────────────────┴───────────────────┘
+```
+
+<div align="right"><a href="#-table-of-contents">⬆ Back to Top</a></div>
 
 ---
 
 ## 📁 Repository Structure
 
-```text
-kubernetes_practice/
-├── agic-web/                    # AGIC deep-dive microservice
-│   ├── Dockerfile               # Nginx Alpine container definition
-│   └── index.html               # Responsive documentation page for AGIC
-├── haproxy-web/                 # HAProxy deep-dive microservice
-│   ├── Dockerfile
-│   └── index.html               # Responsive documentation page for HAProxy
-├── istio-web/                   # Istio Gateway deep-dive microservice
-│   ├── Dockerfile
-│   └── index.html               # Responsive documentation page for Istio
-├── main-web/                    # Central Master Hub portal
-│   ├── Dockerfile
-│   └── index.html               # Master dashboard with overview & navigation cards
-├── nginx-web/                   # NGINX Ingress deep-dive microservice
-│   ├── Dockerfile
-│   └── index.html               # Responsive documentation page for NGINX
-├── payment-web/                 # Interactive payment checkout microservice
-│   ├── default.conf             # Custom Nginx configuration routing / and /payment
-│   ├── Dockerfile
-│   └── index.html               # Interactive checkout demo UI
-├── deployment.yaml              # Kubernetes Deployments for all 6 microservices (12 pods)
-├── ingress.yaml                 # Layer 7 Ingress routing manifest (AGIC controller)
-├── service.yaml                 # Kubernetes ClusterIP Services for all 6 microservices
-└── README.md                    # Project documentation
 ```
+kubernetes_practice/
+│
+├── 🌐 main-web/                     # Central Hub Dashboard
+│   ├── Dockerfile                  # Production Nginx Alpine container definition
+│   └── index.html                  # Responsive modern UI with architectural overview
+│
+├── ☁️ agic-web/                     # Azure AGIC Notes Microservice
+│   ├── Dockerfile
+│   └── index.html                  # Deep-dive documentation on Azure AGIC
+│
+├── ⚡ nginx-web/                    # NGINX Ingress Notes Microservice
+│   ├── Dockerfile
+│   └── index.html                  # Deep-dive documentation on NGINX Ingress
+│
+├── 🕸️ istio-web/                    # Istio Gateway Notes Microservice
+│   ├── Dockerfile
+│   └── index.html                  # Deep-dive documentation on Istio & Envoy
+│
+├── 🚀 haproxy-web/                  # HAProxy Ingress Notes Microservice
+│   ├── Dockerfile
+│   └── index.html                  # Deep-dive documentation on HAProxy
+│
+├── 💳 payment-web/                  # Interactive Payment Checkout Demo
+│   ├── default.conf                # Custom Nginx configuration supporting / & /payment
+│   ├── Dockerfile
+│   └── index.html                  # Interactive checkout application
+│
+├── 📄 deployment.yaml               # 6 Kubernetes Deployments (12 Pods total)
+├── 📄 service.yaml                  # 6 ClusterIP Services (Port 80)
+├── 📄 ingress.yaml                  # Layer 7 Ingress manifest with path routing
+└── 📖 README.md                     # Project documentation
+```
+
+<div align="right"><a href="#-table-of-contents">⬆ Back to Top</a></div>
 
 ---
 
 ## 🛠️ Prerequisites
 
-Before deploying this repository to a cluster, ensure you have:
+Ensure your development environment meets the following requirements:
 
-1. **Kubernetes Cluster**: An active Kubernetes cluster (v1.20+)
-   - *Recommended*: Azure Kubernetes Service (AKS) with the **Application Gateway Ingress Controller (AGIC)** addon enabled.
-   - *Alternative*: Any local or cloud Kubernetes cluster (Minikube, Kind, K3s, EKS, GKE) with an Ingress Controller installed.
-2. **`kubectl` CLI**: Installed and configured to communicate with your target cluster.
-3. **Docker** *(Optional)*: Required only if you intend to rebuild and publish custom container images.
+- [x] **Kubernetes Cluster**: Kubernetes `v1.20+` (Azure AKS with AGIC addon enabled is recommended).
+- [x] **Kubectl CLI**: Authenticated to your target cluster (`kubectl cluster-info`).
+- [x] **Terminal**: Bash, Zsh, or PowerShell with administrator privileges (for `/etc/hosts`).
+- [x] **Docker Engine** *(Optional)*: If you want to rebuild container images locally.
+
+<div align="right"><a href="#-table-of-contents">⬆ Back to Top</a></div>
 
 ---
 
 ## 🚀 Quick Start & Deployment
 
-### 1. Clone the Repository
+### Step 1: Clone the Repository
 
 ```bash
 git clone https://github.com/sonalkawale3/kubernetes_practice.git
 cd kubernetes_practice
 ```
 
-### 2. Deploy All Resources to Kubernetes
+### Step 2: Deploy to Kubernetes
 
-You can apply all manifests in sequence:
+Deploy workloads, services, and the ingress controller rules:
 
 ```bash
-# 1. Deploy the 6 microservice workloads (12 pods total)
+# Option 1: Apply all manifests at once
+kubectl apply -f .
+
+# Option 2: Step-by-step ordered deployment
 kubectl apply -f deployment.yaml
-
-# 2. Expose the workloads via internal ClusterIP Services
 kubectl apply -f service.yaml
-
-# 3. Apply the Layer 7 Ingress routing rules
 kubectl apply -f ingress.yaml
 ```
 
-*Or apply the entire directory at once:*
+### Step 3: Check Rollout Progress
 
 ```bash
-kubectl apply -f .
+# Watch pods until all 12 are in Running state
+kubectl get pods -l "app in (main-web, agic-web, nginx-web, istio-web, haproxy-web, payment-web)" -w
 ```
 
-### 3. Verify Deployment Status
+<details>
+<summary>📋 Click to view expected deployment verification output</summary>
 
-Verify that all pods, services, and the ingress resource are running:
-
-```bash
-# Check Pods (should show 12 pods Running)
-kubectl get pods -o wide
-
-# Check Services (should show 6 ClusterIP services on port 80)
-kubectl get svc
-
-# Check Ingress status and retrieve public IP
-kubectl get ingress jogeshwari-ingress
-```
-
-Sample output:
 ```text
-NAME                 CLASS                      HOSTS                ADDRESS         PORTS   AGE
-jogeshwari-ingress   azure-application-gateway   abc.jogeshwari.xyz   20.219.100.45   80      2m
+NAME                                     READY   STATUS    RESTARTS   AGE
+main-web-deployment-7bb97956cf-5b4j2     1/1     Running   0          45s
+main-web-deployment-7bb97956cf-9l8k1     1/1     Running   0          45s
+agic-web-deployment-64d84f885d-2vxq8     1/1     Running   0          45s
+agic-web-deployment-64d84f885d-8pk9r     1/1     Running   0          45s
+nginx-web-deployment-559d74744f-k2n9a    1/1     Running   0          45s
+nginx-web-deployment-559d74744f-q4z1c    1/1     Running   0          45s
+istio-web-deployment-6f5b9d7cd-4m8vc     1/1     Running   0          45s
+istio-web-deployment-6f5b9d7cd-7x9kl     1/1     Running   0          45s
+haproxy-web-deployment-74f887556b-p09xa  1/1     Running   0          45s
+haproxy-web-deployment-74f887556b-t5j3r  1/1     Running   0          45s
+payment-web-deployment-856df9d48b-3k4l2  1/1     Running   0          45s
+payment-web-deployment-856df9d48b-8m7zq  1/1     Running   0          45s
 ```
+
+</details>
+
+<div align="right"><a href="#-table-of-contents">⬆ Back to Top</a></div>
 
 ---
 
 ## 🌐 DNS & Host Resolution
 
-The Ingress is configured for the host: **`abc.jogeshwari.xyz`**.
+The Ingress is bound to the domain: **`abc.jogeshwari.xyz`**.
 
-To test the application from your local workstation:
+### 1. Retrieve the Ingress IP Address
 
-### Option A: Local Hosts File (Recommended for Testing)
+```bash
+kubectl get ingress jogeshwari-ingress
+```
 
-Map the public IP of your Ingress Controller / Application Gateway to `abc.jogeshwari.xyz`:
-
-1. Obtain your Ingress IP:
-   ```bash
-   kubectl get ingress jogeshwari-ingress -o jsonpath="{.status.loadBalancer.ingress[0].ip}"
-   ```
-
-2. Add an entry to your operating system's `hosts` file:
-   - **Linux / macOS**: `/etc/hosts`
-   - **Windows**: `C:\Windows\System32\drivers\etc\hosts` (run Notepad as Administrator)
-
-   ```text
-   <YOUR_INGRESS_PUBLIC_IP>   abc.jogeshwari.xyz
-   ```
-
-3. Open your browser and navigate to:
-   - **Main Hub**: `http://abc.jogeshwari.xyz/`
-   - **AGIC Guide**: `http://abc.jogeshwari.xyz/agic`
-   - **NGINX Guide**: `http://abc.jogeshwari.xyz/nginx`
-   - **Istio Guide**: `http://abc.jogeshwari.xyz/istio`
-   - **HAProxy Guide**: `http://abc.jogeshwari.xyz/haproxy`
-   - **Payment Demo**: `http://abc.jogeshwari.xyz/payment`
+Look for the value under the `ADDRESS` column:
+```text
+NAME                 CLASS                       HOSTS                ADDRESS          PORTS
+jogeshwari-ingress   azure-application-gateway   abc.jogeshwari.xyz   20.198.112.44    80
+```
 
 ---
 
-### Option B: Quick CLI Test with `curl`
+### 2. Configure Local Host Mapping
 
-If you do not wish to edit your `hosts` file, test directly using `curl` with a custom Host header:
+Add an entry mapping your Ingress IP to `abc.jogeshwari.xyz`:
 
+#### 🐧 On Linux / macOS:
 ```bash
-export INGRESS_IP=$(kubectl get ingress jogeshwari-ingress -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
-
-# Test Main Hub
-curl -H "Host: abc.jogeshwari.xyz" http://$INGRESS_IP/
-
-# Test Payment Microservice
-curl -H "Host: abc.jogeshwari.xyz" http://$INGRESS_IP/payment
+echo "<INGRESS_PUBLIC_IP>  abc.jogeshwari.xyz" | sudo tee -a /etc/hosts
 ```
+
+#### 🪟 On Windows (PowerShell as Administrator):
+```powershell
+Add-Content -Path "C:\Windows\System32\drivers\etc\hosts" -Value "`n<INGRESS_PUBLIC_IP>  abc.jogeshwari.xyz"
+```
+
+---
+
+### 3. Browse the Endpoints
+
+| Service / View | Direct URL |
+|:---|:---|
+| 🌐 **Master Dashboard** | [http://abc.jogeshwari.xyz/](http://abc.jogeshwari.xyz/) |
+| ☁️ **Azure AGIC Guide** | [http://abc.jogeshwari.xyz/agic](http://abc.jogeshwari.xyz/agic) |
+| ⚡ **NGINX Ingress Guide** | [http://abc.jogeshwari.xyz/nginx](http://abc.jogeshwari.xyz/nginx) |
+| 🕸️ **Istio Gateway Guide** | [http://abc.jogeshwari.xyz/istio](http://abc.jogeshwari.xyz/istio) |
+| 🚀 **HAProxy Guide** | [http://abc.jogeshwari.xyz/haproxy](http://abc.jogeshwari.xyz/haproxy) |
+| 💳 **Interactive Payment Demo** | [http://abc.jogeshwari.xyz/payment](http://abc.jogeshwari.xyz/payment) |
+
+> [!TIP]
+> **No DNS or Hosts Access?** Use `curl` with an explicit `Host` header:
+> ```bash
+> curl -i -H "Host: abc.jogeshwari.xyz" http://<INGRESS_PUBLIC_IP>/payment
+> ```
+
+<div align="right"><a href="#-table-of-contents">⬆ Back to Top</a></div>
 
 ---
 
 ## 🔍 Testing & Verification
 
-Run these diagnostic commands to inspect the cluster components:
+Run these validation checks to ensure high availability and proper ingress synchronization:
 
 ```bash
-# Describe Ingress rules and backend mapping
+# 1. Inspect detailed ingress configuration & backends
 kubectl describe ingress jogeshwari-ingress
 
-# Check endpoints for all services to verify healthy pod registration
+# 2. Verify all ClusterIP endpoints are actively populated with pod IPs
 kubectl get endpoints
 
-# Inspect logs of a specific microservice pod
-kubectl logs -l app=main-web --tail=50
-kubectl logs -l app=payment-web --tail=50
+# 3. Stream real-time access logs from the payment microservice
+kubectl logs -f -l app=payment-web --tail=20
 
-# Check AGIC controller pod synchronization logs (in kube-system or agic namespace)
-kubectl logs -l app=ingress-azure -n kube-system --tail=100
+# 4. Stream AGIC ingress controller synchronization events
+kubectl logs -f -l app=ingress-appgw -n kube-system --tail=50
 ```
+
+<div align="right"><a href="#-table-of-contents">⬆ Back to Top</a></div>
 
 ---
 
 ## 🔄 Adapting for Other Ingress Controllers
 
-If you are running in an environment without Azure AGIC (e.g. Minikube, Kind, or a vanilla cluster with **ingress-nginx**), update [`ingress.yaml`](ingress.yaml) as follows:
+While the default manifest in [`ingress.yaml`](ingress.yaml) targets `azure-application-gateway`, this project is completely ingress-agnostic.
+
+<details>
+<summary><b>Click to expand NGINX Ingress (ingress-nginx) configuration</b></summary>
 
 ```yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: jogeshwari-ingress
+  name: jogeshwari-ingress-nginx
   annotations:
-    # NGINX-specific rewrite annotation replacing the AGIC backend-path-prefix
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    # NGINX-specific regex rewrite rule
     nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   ingressClassName: nginx
   rules:
@@ -345,33 +498,40 @@ spec:
               number: 80
 ```
 
+</details>
+
+<div align="right"><a href="#-table-of-contents">⬆ Back to Top</a></div>
+
 ---
 
 ## 📦 Building & Pushing Docker Images
 
-Each microservice is standalone and self-contained. To build and publish your own images:
+All images are published to Docker Hub under `sonalkawale/*`. To build and push updated versions under your own registry:
+
+<details>
+<summary><b>Click to expand Docker build & push scripts</b></summary>
 
 ```bash
-# Replace YOUR_DOCKERHUB_USERNAME with your Docker Hub handle
+# Set your Docker Hub username
 export DOCKER_USER="sonalkawale"
 
-# 1. Main Web Hub
+# 1. Main Hub
 docker build -t $DOCKER_USER/main-web:v2 ./main-web
 docker push $DOCKER_USER/main-web:v2
 
-# 2. AGIC Web
+# 2. AGIC Notes
 docker build -t $DOCKER_USER/agic-web:v1 ./agic-web
 docker push $DOCKER_USER/agic-web:v1
 
-# 3. NGINX Web
+# 3. NGINX Notes
 docker build -t $DOCKER_USER/nginx-web:v1 ./nginx-web
 docker push $DOCKER_USER/nginx-web:v1
 
-# 4. Istio Web
+# 4. Istio Notes
 docker build -t $DOCKER_USER/istio-web:v1 ./istio-web
 docker push $DOCKER_USER/istio-web:v1
 
-# 5. HAProxy Web
+# 5. HAProxy Notes
 docker build -t $DOCKER_USER/haproxy-web:v1 ./haproxy-web
 docker push $DOCKER_USER/haproxy-web:v1
 
@@ -380,30 +540,36 @@ docker build -t $DOCKER_USER/payment-web:v1 ./payment-web
 docker push $DOCKER_USER/payment-web:v1
 ```
 
+</details>
+
+<div align="right"><a href="#-table-of-contents">⬆ Back to Top</a></div>
+
 ---
 
-## ❓ Troubleshooting
+## ❓ Troubleshooting Guide
 
-### 1. Ingress returns `502 Bad Gateway`
-- **Cause**: The backend Pods are not passing health probes or are failing to start.
-- **Fix**: Check `kubectl get pods` to ensure pods are `Running`. Check pod logs using `kubectl logs <pod-name>`.
+| Symptom | Probable Cause | Recommended Resolution |
+|:---|:---|:---|
+| **`502 Bad Gateway`** | Pods are still initialising, crashed, or failing readiness checks. | Run `kubectl get pods` to verify pod status. Inspect logs with `kubectl logs <pod-name>`. |
+| **`404 Not Found`** | Path rewrite annotation is missing, forwarding `/payment` instead of `/`. | Verify `appgw.ingress.kubernetes.io/backend-path-prefix: "/"` exists in [`ingress.yaml`](ingress.yaml). In `payment-web`, verify [`payment-web/default.conf`](payment-web/default.conf). |
+| **Ingress `ADDRESS` is `<pending>`** | Ingress controller pod is absent or lacks Azure RBAC permissions to update the App Gateway. | Check AGIC controller logs: `kubectl logs -n kube-system -l app=ingress-appgw`. |
+| **Connection Refused** | Hostname mismatch or incorrect IP. | Ensure your request passes the exact `Host: abc.jogeshwari.xyz` header. |
 
-### 2. Ingress `ADDRESS` is empty / pending
-- **Cause**: The Ingress Controller (e.g. AGIC or ingress-nginx) is not installed, not running, or lacks permissions to update Azure Application Gateway.
-- **Fix**: Inspect the AGIC controller pod logs in `kube-system`:
-  ```bash
-  kubectl get pods -n kube-system -l app=ingress-appgw
-  kubectl logs -n kube-system -l app=ingress-appgw --tail=50
-  ```
-
-### 3. Path routes return `404 Not Found`
-- **Cause**: The downstream Nginx container is receiving the prefixed URI (e.g. `/payment`) instead of `/`, but Nginx is configured to serve static assets from `/usr/share/nginx/html` at `/`.
-- **Fix**: Verify that the annotation `appgw.ingress.kubernetes.io/backend-path-prefix: "/"` is present in [`ingress.yaml`](ingress.yaml). In `payment-web`, ensure [`payment-web/default.conf`](payment-web/default.conf) includes location blocks for both `/` and `/payment`.
+<div align="right"><a href="#-table-of-contents">⬆ Back to Top</a></div>
 
 ---
 
 ## 👤 Author & Credits
 
-- **Repository Maintainer**: [sonalkawale3](https://github.com/sonalkawale3)
-- **Project**: Kubernetes Practice & Ingress Controller Architecture Lab
-- **Domain**: `abc.jogeshwari.xyz`
+<div align="center">
+
+Built with ❤️ for Cloud Native & DevOps Engineers
+
+**Maintained by [sonalkawale3](https://github.com/sonalkawale3)**
+
+⭐ If this repository helped you master Kubernetes Ingress, consider giving it a star! ⭐
+
+[![GitHub stars](https://img.shields.io/github/stars/sonalkawale3/kubernetes_practice?style=social)](https://github.com/sonalkawale3/kubernetes_practice)
+[![GitHub forks](https://img.shields.io/github/forks/sonalkawale3/kubernetes_practice?style=social)](https://github.com/sonalkawale3/kubernetes_practice)
+
+</div>
